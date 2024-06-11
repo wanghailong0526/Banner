@@ -1,0 +1,118 @@
+[
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image6.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image6.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image4.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image4.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image1.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image1.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/xml_backup_rules.xml.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/layout_banner_item.xml.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/layout/banner_item.xml"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable-v24_ic_launcher_foreground.xml.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable-v24/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image3.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image3.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image10.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image10.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image8.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image8.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_ic_launcher_background.xml.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image5.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image5.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/layout_activity_main.xml.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.whl.banner.app-debug-49:/layout_activity_main.xml.flat",
+        "source": "com.whl.banner.app-main-51:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image9.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image9.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image2.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image2.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/drawable_image7.jpg.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/drawable/image7.jpg"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-debug-49:/xml_data_extraction_rules.xml.flat",
+        "source": "/Users/wanghailong/.gradle/daemon/8.6/com.whl.banner.app-main-51:/xml/data_extraction_rules.xml"
+    }
+]
