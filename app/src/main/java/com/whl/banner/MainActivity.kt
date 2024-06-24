@@ -11,30 +11,30 @@ import android.view.animation.AccelerateInterpolator
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import com.whl.banner.indicator.CircleIndicatorView
+import com.whl.banner.CircleIndicator
 
 class MainActivity : ComponentActivity() {
 
     private var data = ArrayList<Int>()
-    private lateinit var indicatorView: CircleIndicatorView
+    private lateinit var indicatorView: CircleIndicator
     private lateinit var banner: Banner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        var width = DensityUtil.pxToDp(this, 1280f);
+        var height = DensityUtil.pxToDp(this, 650f);
+        var aa = DensityUtil.pxToDp(this, 350f);
+        var bb = DensityUtil.pxToDp(this, 170f);
+        println("whl ***" + "宽：" + width + " 高：" + height + " aa:" + aa + " bb:" + bb)
 
         banner = findViewById<Banner>(R.id.banner)
-        indicatorView = CircleIndicatorView(banner.context)
+        indicatorView = findViewById<CircleIndicator>(R.id.indicator)
 
-        banner.setIndicatorView(indicatorView)
-            .setIndicatorViewTopSpace(BannerUtils.dp2px(20f))
-            .addLifecycleObserver(this)
-            .setScaleValue(0.3f)
-            .setAdapter(BannerAdapter(data))
-            .setOnPageClickListener {
+        banner.setIndicatorView(indicatorView).addLifecycleObserver(this)
+            .setAdapter(BannerAdapter(data)).setOnPageClickListener {
                 Toast.makeText(this, "点击了 ${it + 1}", Toast.LENGTH_SHORT).show()
-            }
-            .setOnPageChangedListener { leftPageIndex, currentPagIndex, rightPageIndex ->
+            }.setOnPageChangedListener { leftPageIndex, currentPagIndex, rightPageIndex ->
 
             }
 
@@ -61,7 +61,6 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         println("whl *** MainActivity onResume")
-
     }
 }
 
@@ -79,7 +78,7 @@ class BannerAdapter(private var dataSet: ArrayList<Int>) : Banner.Adapter<Banner
     }
 
     override fun getItemCount(): Int {
-        return dataSet?.size ?: 0
+        return if (dataSet != null) dataSet.size else 0
     }
 }
 
