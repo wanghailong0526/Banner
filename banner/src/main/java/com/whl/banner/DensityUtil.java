@@ -16,8 +16,8 @@ public class DensityUtil {
     /**
      * 根据手机的分辨率从 px(像素) 的单位 转成为 dp(相对大小)
      */
-    public static int pxToDp(Context context, float pxValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
+    public static int pxToDp(float pxValue) {
+        final float scale = Resources.getSystem().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
 }

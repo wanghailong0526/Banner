@@ -1,5 +1,7 @@
 package com.whl.banner;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
@@ -9,9 +11,15 @@ import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -21,6 +29,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+
+import com.google.android.material.animation.AnimatorSetCompat;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -57,11 +67,15 @@ public class Banner extends FrameLayout {
     private Adapter mAdapter;
     private IIndicator mIndicatorView;
     private boolean mIsAutoLoop = true;//是否自动轮播
-    private LoopHandler mLoopHandler;
-    private long mLoopTime = 3000;//轮播间隔时间 3 秒
+    private AutoLoopTask mLoopTask;
+    private long mLoopTime = 3500;//轮播间隔时间
+    private long mChangePagetime = 150;//切换图片的时间
+    private long mScrollVelocity = 8000;//滑动速度
+    private long scaleDuration = 500;//缩放动画时间
     private OnPageChnagedListener mOnPageChangedListener;
     private onPageClickListener mOnpageClickListener;
-    private PageAnimator mPageAnimator;
+    private VelocityTracker mVelocityTracker;
+    private DecelerateInterpolator decelerateInterpolator;
 
 
     public Banner(Context context) {
@@ -78,9 +92,9 @@ public class Banner extends FrameLayout {
     }
 
     private void init() {
-        mLoopHandler = new LoopHandler(Looper.getMainLooper(), this);
-        mHolders = new ArrayList();
-        mPageAnimator = new com.whl.banner.PageAnimator();
+        mLoopTask = new AutoLoopTask(this);
+        mHolders = new ArrayList<ViewHolder>();
+        decelerateInterpolator = new DecelerateInterpolator();
     }
 
     public void notifiedDataSetChanged() {
@@ -116,7 +130,6 @@ public class Banner extends FrameLayout {
             mIndicatorView.setItemCount(mAdapter.getItemCount());
             mIndicatorView.setCurrentPosition(currentDataIdx);
         }
-
         startLoop();
     }
 
@@ -124,6 +137,10 @@ public class Banner extends FrameLayout {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         MotionEvent ev = event;
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+        mVelocityTracker.addMovement(ev);
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 stopLoop();
@@ -144,7 +161,8 @@ public class Banner extends FrameLayout {
                     }
                     isDragged = true;
                     dx = mx;
-                    ViewCompat.offsetLeftAndRight(mHolders.get(currentPageIdx).itemView, deltax);
+//                    ViewCompat.offsetLeftAndRight(mHolders.get(currentPageIdx).itemView, deltax);
+                    mHolders.get(currentPageIdx).itemView.setTranslationX(mHolders.get(currentPageIdx).itemView.getTranslationX() + deltax);
                     totalScroll += deltax;
                 }
                 break;
@@ -169,14 +187,24 @@ public class Banner extends FrameLayout {
 
     private void changePage(int totalScroll) {
         if (Math.abs(totalScroll) >= switchPageDis) {//切换 page
+            //滑动速度不允许太快
+            if (isDragged) {
+                final VelocityTracker velocityTracker = mVelocityTracker;
+                velocityTracker.computeCurrentVelocity(1000, ViewConfiguration.get(Banner.this.getContext()).getScaledMaximumFlingVelocity());
+                int xVelocity = (int) velocityTracker.getXVelocity();
+//                Log.i("whl ***", xVelocity > 0 ? "向右滑动，速度是：" + xVelocity : "向左滑动，速度是：" + xVelocity);
+                if (Math.abs(xVelocity) > mScrollVelocity) {
+                    resetPage(totalScroll);
+                    return;
+                }
+            }
             //达到滑动边界，开始切换 view
             //1. 如果当前显示的 View 向左滑动， 当前显示 View 的左边一张向右滑动，当前显示 View 的右边向左滑动
             int currentScrollPos = backViewWidth - currentPageWidth / 2 + ((isDragged ? totalScroll : 0) * -flag);//当前 View 的滑动距离
             //当前 View 滑动
-            ViewCompat.offsetLeftAndRight(mHolders.get(currentPageIdx).itemView, currentScrollPos * flag);
-            if (mPageAnimator != null) {
-                mPageAnimator.pageOutAnim(mHolders.get(currentPageIdx).itemView);
-            }
+            ViewCompat.animate(mHolders.get(currentPageIdx).itemView).translationXBy(currentScrollPos * flag).setDuration(mChangePagetime).setInterpolator(decelerateInterpolator).start();
+
+            ViewCompat.animate(mHolders.get(currentPageIdx).itemView).scaleX(1.0f).scaleY(1.0f).setDuration(scaleDuration).setInterpolator(decelerateInterpolator).start();
 
             //向左滑动 计算滑动距离
             if (flag == -1) {
@@ -211,9 +239,10 @@ public class Banner extends FrameLayout {
                 leftPageIdx = mHolders.size() - 1;
             }
             //左边一张滑动
-            ViewCompat.offsetLeftAndRight(mHolders.get(leftPageIdx).itemView, leftPageScrollDis);
+            ViewCompat.animate(mHolders.get(leftPageIdx).itemView).translationXBy(leftPageScrollDis).setDuration(mChangePagetime).setInterpolator(decelerateInterpolator).start();
 
-            if (flag == -1 && mAdapter.getItemCount() > 3) {//使用 viewholder 绑数据
+            //使用 viewholder 绑数据
+            if (flag == -1 && mAdapter.getItemCount() > 3) {
                 //currentDataIdx + 1 如果当前是向左滑动，最左边的 page 向右滑动，此时最左 page 显示的是最右边的 page 的下一个数据源的数据
                 mAdapter.onBindViewHolder(mHolders.get(leftPageIdx), getLeftDataIdx());
             }
@@ -223,9 +252,10 @@ public class Banner extends FrameLayout {
                 rightPageIdx = 0;
             }
             //右边一张滑动
-            ViewCompat.offsetLeftAndRight(mHolders.get(rightPageIdx).itemView, rightPageScrollDis);
+            ViewCompat.animate(mHolders.get(rightPageIdx).itemView).translationXBy(rightPageScrollDis).setDuration(mChangePagetime).setInterpolator(decelerateInterpolator).start();
 
-            if (flag == 1 && mAdapter.getItemCount() > 3) {//使用 viewholder 绑数据
+            //使用 viewholder 绑数据
+            if (flag == 1 && mAdapter.getItemCount() > 3) {
                 //currentDataIdx - 1 如果是向右滑动，当前显示 page 的右边显示的是getItemCount-2的数据源的数据
                 mAdapter.onBindViewHolder(mHolders.get(rightPageIdx), getRightDataIdx());
             }
@@ -244,15 +274,23 @@ public class Banner extends FrameLayout {
                 currentPageIdx = mHolders.size() - 1;
             }
             currentPageIdx %= 3;
-            if (mPageAnimator != null) {
-                mPageAnimator.pageInAnim(mHolders.get(currentPageIdx).itemView);
-            }
+
+            ViewCompat.animate(mHolders.get(currentPageIdx).itemView).scaleX(1.3f).scaleY(1.3f).setDuration(scaleDuration).setInterpolator(decelerateInterpolator).start();
+
             if (mIndicatorView != null) {
                 mIndicatorView.setCurrentPosition(currentDataIdx);
             }
+            if (mOnPageChangedListener != null) {
+                mOnPageChangedListener.onPageChanged(leftPageIdx, currentPageIdx, rightPageIdx);
+            }
+
         } else {//复位 page
-            ViewCompat.offsetLeftAndRight(mHolders.get(currentPageIdx).itemView, -totalScroll);
+            resetPage(totalScroll);
         }
+    }
+
+    private void resetPage(int dis) {
+        mHolders.get(currentPageIdx).itemView.setTranslationX(mHolders.get(currentPageIdx).itemView.getTranslationX() + -dis);
     }
 
     /**
@@ -263,11 +301,11 @@ public class Banner extends FrameLayout {
      * @param view 是否在这个 view 内
      * @return true (x,y)在 view 内
      */
-    public boolean pointInView(float x, float y, View view) {
+    private boolean pointInView(float x, float y, View view) {
         Rect rect = new Rect();
         view.getGlobalVisibleRect(rect);
-        rect.bottom = (int) (rect.bottom + ((view.getHeight() * view.getScaleY()) / 2));
-        rect.right = (int) (rect.right + ((view.getWidth() * view.getScaleX()) / 2));
+        rect.bottom = (int) (rect.bottom + (view.getHeight() * view.getScaleY()) / 2);
+        rect.right = (int) (rect.right + (view.getWidth() * view.getScaleX()) / 2);
         boolean isInViewRect = rect.contains((int) x, (int) y);
         return isInViewRect;
     }
@@ -334,65 +372,68 @@ public class Banner extends FrameLayout {
         backViewWidth = childWidth;
         switchPageDis = currentPageWidth / 3;
 
-        if (mPageAnimator != null && mHolders.size() > 0) {
-            mPageAnimator.pageInAnim(mHolders.get(0).itemView);
-        }
+        mHolders.get(2).itemView.setPivotX((float) mHolders.get(2).itemView.getMeasuredWidth() / 2);
+        mHolders.get(2).itemView.setPivotY((float) mHolders.get(2).itemView.getMeasuredHeight() / 2);
+        mHolders.get(1).itemView.setPivotX((float) mHolders.get(1).itemView.getMeasuredWidth() / 2);
+        mHolders.get(1).itemView.setPivotY((float) mHolders.get(1).itemView.getMeasuredHeight() / 2);
+        mHolders.get(0).itemView.setPivotX((float) mHolders.get(0).itemView.getMeasuredWidth() / 2);
+        mHolders.get(0).itemView.setPivotY((float) mHolders.get(0).itemView.getMeasuredHeight() / 2);
+
+        //最前面图片放大
+        ViewCompat.animate(mHolders.get(0).itemView).scaleX(1.3f).scaleY(1.3f).setInterpolator(decelerateInterpolator).setDuration(scaleDuration).start();
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        if (changed) {
-            int childCount = getChildCount();
-            if (childCount <= 0) return;
+        int childCount = getChildCount();
+        if (childCount <= 0) return;
 
-            View child0 = getChildAt(0);
-            int childWidth = child0.getMeasuredWidth();
-            int childHeight = child0.getMeasuredHeight();
+        View child0 = getChildAt(0);
+        int childWidth = child0.getMeasuredWidth();
+        int childHeight = child0.getMeasuredHeight();
 
-            int measuredWidth = getMeasuredWidth();
-            int measuredHeight = getMeasuredHeight();
+        int measuredWidth = getMeasuredWidth();
+        int measuredHeight = getMeasuredHeight();
 
-            int left = measuredWidth / 2 - childWidth / 2;
-            int top = measuredHeight / 2 - childHeight / 2 + getPaddingTop();
-            int right = left + childWidth;
-            int bottom = childHeight + getPaddingTop();
+        int left = measuredWidth / 2 - childWidth / 2;
+        int top = measuredHeight / 2 - childHeight / 2 + getPaddingTop();
+        int right = left + childWidth;
+        int bottom = childHeight + getPaddingTop();
 
-            child0.layout(left, top, right, bottom);
+        child0.layout(left, top, right, bottom);
 
-            left = measuredWidth / 2;
-            right = left + childWidth;
-            View child1 = getChildAt(1);
-            child1.layout(left, top, right, bottom);
+        left = measuredWidth / 2;
+        right = left + childWidth;
+        View child1 = getChildAt(1);
+        child1.layout(left, top, right, bottom);
 
-            left = measuredWidth / 2 - 2 * childWidth / 2;
-            right = left + childWidth;
-            View child2 = getChildAt(2);
-            child2.layout(left, top, right, bottom);
-        }
+        left = measuredWidth / 2 - 2 * childWidth / 2;
+        right = left + childWidth;
+        View child2 = getChildAt(2);
+        child2.layout(left, top, right, bottom);
     }
 
-    private static class LoopHandler extends Handler {
-        private WeakReference<Banner> reference;
+    static class AutoLoopTask implements Runnable {
+        private final WeakReference<Banner> reference;
 
-        public LoopHandler(@NonNull Looper looper, Banner banner) {
-            super(looper);
+        AutoLoopTask(Banner banner) {
             this.reference = new WeakReference<>(banner);
         }
 
         @Override
-        public void handleMessage(@NonNull Message msg) {
+        public void run() {
             Banner banner = reference.get();
             if (banner != null && banner.canLoop()) {
                 banner.isDragged = false;
                 banner.changePage(banner.switchPageDis);
-                sendEmptyMessageDelayed(1, banner.mLoopTime);
+                banner.postDelayed(banner.mLoopTask, banner.mLoopTime);
             }
         }
     }
 
     private boolean canLoop() {
-        return mIsAutoLoop && mAdapter != null && mAdapter.getItemCount() >= 3;
+        return mIsAutoLoop && mAdapter != null && mAdapter.getItemCount() > 0;
     }
 
     /**
@@ -401,7 +442,7 @@ public class Banner extends FrameLayout {
     public Banner startLoop() {
         if (canLoop()) {
             stopLoop();
-            mLoopHandler.sendEmptyMessageDelayed(1, mLoopTime);
+            postDelayed(mLoopTask, mLoopTime);
         }
         return this;
     }
@@ -410,18 +451,21 @@ public class Banner extends FrameLayout {
      * 停止轮播
      */
     public Banner stopLoop() {
-        mLoopHandler.removeCallbacksAndMessages(null);
+        removeCallbacks(mLoopTask);
         return this;
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasWindowFocus) {
-        super.onWindowFocusChanged(hasWindowFocus);
-        if (hasWindowFocus) {
-            startLoop();
-        } else {
-            stopLoop();
-        }
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        startLoop();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        stopLoop();
+        if (mVelocityTracker != null) mVelocityTracker.recycle();
+        super.onDetachedFromWindow();
     }
 
     public Banner addLifecycleObserver(LifecycleOwner owner) {
@@ -432,6 +476,12 @@ public class Banner extends FrameLayout {
                     switch (event) {
                         case ON_RESUME:
                             startLoop();
+                            break;
+                        case ON_PAUSE:
+                            stopLoop();
+                            break;
+                        case ON_STOP:
+                            stopLoop();
                             break;
                         case ON_DESTROY:
                             stopLoop();
@@ -484,11 +534,6 @@ public class Banner extends FrameLayout {
         public void pageOutAnim(View view);
 
         public void pageTranslation(View view, int dis);
-    }
-
-    public Banner setPageAnimator(PageAnimator pageAnimator) {
-        mPageAnimator = pageAnimator;
-        return this;
     }
 
     public Banner setAdapter(Adapter adapter) {
