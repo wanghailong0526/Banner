@@ -18,6 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.whl.banner.CircleIndicator
+import kotlin.concurrent.thread
 
 class MainActivity : ComponentActivity() {
 
@@ -51,11 +52,11 @@ class MainActivity : ComponentActivity() {
             data.add("https://i.hd-r.cn/31e46999c8c21e90737cee6207ccf42e.jpg")
             data.add("https://i.hd-r.cn/b6f395d6d9699fad9c29308b8ae6a985.jpg")
             data.add("https://i.hd-r.cn/f0b825618d8dcb156aaa57039b3ad52d.jpg")
-
             data.forEach() { url ->
                 Glide.with(this.applicationContext).load(url).apply(options)
                     .preload(DensityUtil.dpToPx(177f), DensityUtil.dpToPx(112f))
             }
+
             /**
              * 数据返回后更新
              */

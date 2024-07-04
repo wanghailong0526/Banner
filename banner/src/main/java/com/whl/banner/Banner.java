@@ -64,10 +64,10 @@ public class Banner extends FrameLayout {
     private int leftPageScrollDis = 0;
     private int rightPageScrollDis = 0;
 
-    private Adapter mAdapter;
+    Adapter mAdapter;
     private IIndicator mIndicatorView;
     private boolean mIsAutoLoop = true;//是否自动轮播
-    private AutoLoopTask mLoopTask;
+    AutoLoopTask mLoopTask;
     private long mLoopTime = 3500;//轮播间隔时间
     private long mChangePagetime = 150;//切换图片的时间
     private long mScrollVelocity = 8000;//滑动速度
@@ -135,8 +135,7 @@ public class Banner extends FrameLayout {
 
     @SuppressLint("ObjectAnimatorBinding")
     @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        MotionEvent ev = event;
+    public boolean dispatchTouchEvent(MotionEvent ev) {
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
         }
@@ -526,14 +525,6 @@ public class Banner extends FrameLayout {
     public Banner setOnPageClickListener(onPageClickListener onPageClickListener) {
         mOnpageClickListener = onPageClickListener;
         return this;
-    }
-
-    public interface PageAnimator {
-        public void pageInAnim(View view);
-
-        public void pageOutAnim(View view);
-
-        public void pageTranslation(View view, int dis);
     }
 
     public Banner setAdapter(Adapter adapter) {

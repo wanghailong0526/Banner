@@ -54,11 +54,12 @@ public class CircleIndicator extends View implements IIndicator {
         if (mItemCount <= 1) {
             return;
         }
+        Paint paint = mPaint;
         float left = 0;
         for (int i = 0; i < mItemCount; ++i) {
-            mPaint.setColor(mCurrentPosition == i ? Color.parseColor("#5CB85C") : Color.parseColor("#BDBDBD"));
+            paint.setColor(mCurrentPosition == i ? Color.parseColor("#5CB85C") : Color.parseColor("#BDBDBD"));
             int radius = mCurrentPosition == i ? mSelectedRadius : mNormalRadius;
-            canvas.drawCircle(left + radius, maxRadius, radius, mPaint);
+            canvas.drawCircle(left + radius, maxRadius, radius, paint);
             left += mIndicatorSpace + radius * 2;
         }
     }

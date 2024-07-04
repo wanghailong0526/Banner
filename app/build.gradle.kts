@@ -111,6 +111,6 @@ dependencies {
     implementation("com.github.bumptech.glide:okhttp3-integration:4.11.0") {
         exclude(group = "glide-parent")
     }
-
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
 }
